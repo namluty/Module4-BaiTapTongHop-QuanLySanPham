@@ -11,6 +11,8 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -71,15 +73,21 @@ public class ProductController {
     }
 
     @PostMapping("/edit")
-    public String editCustomer(@ModelAttribute("editForm") Product product) {
+    public  String createProduct(@ModelAttribute("editForm") Product product, MultipartFile newImage, RedirectAttributes redirect){
+        String newImageName = newImage.getOriginalFilename();
+        try {
+            FileCopyUtils.copy(newImage.getBytes(), new File(fileUpload + newImageName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(newImageName != ""){
+            product.setImage(newImageName);
+        }
         productService.save(product);
+        redirect.addFlashAttribute("message", "Edit product successfully");
         return "redirect:/product";
     }
-    @PostMapping("/update")
-    public String update(Product product) {
-        productService.update(product.getId(), product);
-        return "redirect:/product";
-    }
+
     @GetMapping("/{id}/detail")
     public ModelAndView detailCustomer(@PathVariable Long id) {
         Product product = productService.findById(id);

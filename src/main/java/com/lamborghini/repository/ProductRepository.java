@@ -27,7 +27,7 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public void save(Product product) {
-        if (product != null) {
+        if (product.getId() != null) {
             entityManager.merge(product);
         } else {
             entityManager.persist(product);
@@ -43,12 +43,13 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public void update(Long id, Product product) {
-    }
+
+        }
 
     @Override
     public void remove(Long id) {
         Product product = findById(id);
-        if (product != null) {
+        if (product.getId() != null) {
             entityManager.remove(product);
         }
     }
